@@ -15,7 +15,8 @@ const app = express();
 const server = http.createServer(app);
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://goyee.lcind.space"
+  "https://goyee.lcind.space",
+  "https://goye.in"
 ];
 
 // Socket.io CORS setup
