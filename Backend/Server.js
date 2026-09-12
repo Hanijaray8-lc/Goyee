@@ -14,7 +14,7 @@ const Schedule = require('./models/Schedule');
 const app = express();
 const server = http.createServer(app);
 const allowedOrigins = [
-  "http://localhost:3000",
+ "http://localhost:3000",
   "https://goyee.lcind.space",
   "https://goye.in",
   "https://goye.in/"
@@ -79,12 +79,15 @@ async function startWhatsAppForUser(email) {
         const { state, saveCreds } = await useMultiFileAuthState(folderName);
         const { version } = await fetchLatestBaileysVersion();
 
-        const client = makeWASocket({
+              const client = makeWASocket({
             version,
             auth: state,
             printQRInTerminal: false,
             logger: pino({ level: "silent" }),
-            browser: ["Goyee", "Chrome", "1.0.0"]
+            browser: ["Goyee", "Chrome", "1.0.0"],
+            getMessage: async (key) => {
+                return { conversation: "" };
+            }
         });
 
         userClients[email].whatsappClient = client;
@@ -402,7 +405,8 @@ io.on("connection", (socket) => {
                     await creditUser.save();
                     socket.emit("credits_updated", { credits: runningCredits, totalSent: runningTotalSent });
 
-                    await new Promise(resolve => setTimeout(resolve, 2000));
+const sendDelay = Math.floor(Math.random() * 1000) + 3000; // 3 to 4 seconds safe delay
+await new Promise(resolve => setTimeout(resolve, sendDelay));
                 } catch (error) {
                     console.error(`❌ Failed to send to ${num}`, error);
                     
@@ -646,7 +650,8 @@ async function executeScheduledJob(scheduleDoc) {
                         io.emit("credits_updated", { credits: runningCredits, totalSent: runningTotalSent });
                     }
 
-                    await new Promise(resolve => setTimeout(resolve, 2000));
+const sendDelay = Math.floor(Math.random() * 1000) + 3000; // 3 to 4 seconds safe delay
+await new Promise(resolve => setTimeout(resolve, sendDelay));
                 } catch(e) {
                     console.error('Error sending scheduled to', num, e);
                     let reason = e.message || "Unable to send message.";
